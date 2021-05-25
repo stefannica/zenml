@@ -341,8 +341,6 @@ class Repository:
     def get_pipeline_file_paths(self, only_file_names: bool = False) -> \
             Optional[List[Text]]:
         """Gets list of pipeline file path"""
-        self._check_if_initialized()
-
         pipelines_dir = self.zenml_config.get_pipelines_dir()
 
         if not path_utils.is_dir(pipelines_dir):

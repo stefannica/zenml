@@ -16,6 +16,7 @@
 import fnmatch
 import os
 import tarfile
+import tempfile
 from pathlib import Path
 from typing import Text, Callable
 
@@ -154,6 +155,20 @@ def resolve_relative_path(path: Text):
     """
     if is_remote(path):
         return path
+    return str(Path(path).resolve())
+
+
+def resolve_file_locally(path: Text):
+    """
+    Takes a file a downloads it to a temp local directory if its remote.
+
+    Args:
+        path (str): Local path in filesystem.
+    """
+    if is_remote(path):
+        tmp = tempfile.NamedTemporaryFile(delete=False)
+        copy(path, tmp.name, overwrite=True)
+        return tmp.name
     return str(Path(path).resolve())
 
 

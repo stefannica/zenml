@@ -45,6 +45,7 @@ def read_yaml(file_path: Text):
         file_path (str): Path to YAML file.
     """
     if path_utils.file_exists(file_path):
+        file_path = path_utils.resolve_file_locally(file_path)
         with open(file_path, 'r') as f:
             return yaml.load(f.read(), Loader=yaml.FullLoader)
     else:
@@ -87,6 +88,7 @@ def read_json(file_path: Text):
         file_path (str): Path to JSON file.
     """
     if path_utils.file_exists(file_path):
+        file_path = path_utils.resolve_file_locally(file_path)
         with open(file_path, 'r') as f:
             return json.loads(f.read())
     else:
