@@ -66,15 +66,11 @@ class Datasource(Base):
 
     # FK
     team_id = Column(GUID(), ForeignKey('team.id'))
-    metadatastore_id = Column(GUID(), ForeignKey('metadatastore.id'))
-    origin_pipeline_id = Column(GUID(), ForeignKey('pipeline.id'), index=True)
 
     # Relationship
     team = relationship("Team", back_populates="datasources")
     datasource_commits = relationship("DatasourceCommit",
                                       back_populates="datasource")
-    metadatastore = relationship("Metadatastore", back_populates="datasource")
-    origin_pipeline = relationship("Pipeline")
 
 
 class DatasourceCommit(Base):
@@ -112,8 +108,7 @@ class Workspace(Base):
 
 class Metadatastore(Base):
     id = Column(GUID(), primary_key=True, index=True, default=uuid4)
-    orchestrator_host = Column(String)
-    internal_host = Column(String)
+    host = Column(String)
     port = Column(Integer)
     database = Column(String)
     username = Column(String)
@@ -174,6 +169,27 @@ class PipelineRun(Base):
                                   back_populates="pipeline_run")
 
 
+class Schedule(Base):
+    id = Column(GUID(), primary_key=True, index=True, default=uuid4)
+    start_time = Column(DateTime(timezone=True))
+    end_time = Column(DateTime(timezone=True))
+    interval = Column(String, index=True)
+
+    # FK
+    pipeline_id = Column(GUID(), ForeignKey('pipeline.id'), index=True)
+    datasource_commit_id = Column(GUID(), ForeignKey('datasourcecommit.id'))
+    user_id = Column(GUID(), ForeignKey('user.id'), index=True)
+
+    # Relationship
+    pipeline = relationship("Pipeline",
+                            back_populates="pipeline_runs")
+    datasource_commit = relationship("DatasourceCommit",
+                                     back_populates="pipeline_runs")
+    user = relationship("User", back_populates="pipeline_runs")
+
+    pipeline_steps = relationship("PipelineStep",
+                                  back_populates="pipeline_run")
+
 class PipelineStep(Base):
     id = Column(GUID(), primary_key=True, index=True, default=uuid4)
     start_time = Column(DateTime(timezone=True))
@@ -195,9 +211,6 @@ class Backend(Base):
 
     # unique name of the backend
     name = Column(String)
-
-    # class of provider, i.e., gcp
-    backend_class = Column(String)
 
     # type of provider, i.e., gcp
     type = Column(String)
