@@ -4,8 +4,6 @@ from app.db.base_class import Base  # noqa
 from app.db.models import User  # noqa
 from app.db.models import Datasource
 from app.db.models import DatasourceCommit
-# from app.db.models import DatasourceBQ
-# from app.db.models import DatasourceImage
 from app.db.models import Team
 from app.db.models import Pipeline
 from app.db.models import Role
