@@ -43,9 +43,7 @@ class User(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
     # FK
-    team_id = Column(GUID(),
-                             ForeignKey('team.id'),
-                             nullable=True)
+    team_id = Column(GUID(), ForeignKey('team.id'), nullable=True)
     role_id = Column(GUID(), ForeignKey('role.id'), nullable=True)
 
     # Relationship
@@ -206,6 +204,4 @@ class Backend(Base):
 
     # FK
     user_id = Column(GUID(), ForeignKey('user.id'), index=True)
-    team_id = Column(GUID(),
-                             ForeignKey('team.id'),
-                             nullable=True)
+    team_id = Column(GUID(), ForeignKey('team.id'), nullable=True)
