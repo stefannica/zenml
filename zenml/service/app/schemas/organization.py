@@ -5,11 +5,11 @@ from pydantic import BaseModel
 
 
 # Shared properties
-class OrganizationBase(BaseModel):
+class TeamBase(BaseModel):
     name: Optional[str] = None
 
 
-class OrganizationInDB(OrganizationBase):
+class TeamInDB(TeamBase):
     id: Optional[str] = None
     created_at: Optional[datetime] = None
 
@@ -18,15 +18,15 @@ class OrganizationInDB(OrganizationBase):
 
 
 # Properties to receive via API on creation
-class OrganizationCreate(OrganizationBase):
+class TeamCreate(TeamBase):
     pass
 
 
 # Additional properties to return via API
-class Organization(OrganizationInDB):
+class Team(TeamInDB):
     pass
 
 
 # Properties to receive via API on update
-class OrganizationUpdate(OrganizationInDB):
+class TeamUpdate(TeamInDB):
     pass

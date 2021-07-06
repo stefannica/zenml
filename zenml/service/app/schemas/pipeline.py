@@ -15,7 +15,7 @@ class PipelineBase(BaseModel):
 class PipelineInDB(PipelineBase):
     id: Optional[str] = None
     created_at: Optional[datetime] = None
-    organization_id: Optional[str] = None
+    team_id: Optional[str] = None
     user_id: Optional[str] = None
 
     class Config:

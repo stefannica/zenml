@@ -13,7 +13,7 @@ class CRUDDatasource(
     def get_by_org(self, db_session: Session, *, org_id: str) \
             -> List[Datasource]:
         return db_session.query(Datasource).filter(
-            Datasource.organization_id == org_id).all()
+            Datasource.team_id == org_id).all()
 
 
 datasource = CRUDDatasource(Datasource)

@@ -10,7 +10,7 @@ from sqlalchemy.orm import Session
 from app import crud
 from app.config import ENV_TYPE
 from app.db.models import User as DBUser
-from app.schemas.organization import OrganizationCreate
+from app.schemas.team import TeamCreate
 from app.schemas.user import User, UserUpdate
 from app.schemas.user import UserCreate
 from app.utils.db import get_db
@@ -71,7 +71,7 @@ async def create_user(
         user_in: UserCreate,
 ):
     """
-    Create new user and organization
+    Create new user and team
     """
     total_active_users = crud.user.get_total_users(db)
     logging.info("Signing up: {}".format(user_in.email))
@@ -89,25 +89,25 @@ async def create_user(
             detail="The user with this username already exists in the system.",
         )
 
-    # create an organization if not specified
-    if user_in.organization_name is None:
+    # create an team if not specified
+    if user_in.team_name is None:
         raise HTTPException(
             status_code=400,
-            detail="Please specify an organization name when creating user."
+            detail="Please specify an team name when creating user."
         )
 
-    org = crud.organization.get_by_name(db, name=user_in.organization_name)
+    org = crud.team.get_by_name(db, name=user_in.team_name)
     if not org:
         # creating without an invite
-        org = crud.organization.create(
+        org = crud.team.create(
             db_session=db,
-            obj_in=OrganizationCreate(name=user_in.organization_name))
+            obj_in=TeamCreate(name=user_in.team_name))
 
         # always a creator if the first one in the org
         user_in.role = RolesTypes.creator.name
 
-        # Set the organization
-        user_in.organization_id = org.id
+        # Set the team
+        user_in.team_id = org.id
 
         # create a user
         user = crud.user.create(db, obj_in=user_in)
@@ -116,19 +116,19 @@ async def create_user(
         try:
             if ENV_TYPE == EnvironmentTypes.production.name or \
                     ENV_TYPE == EnvironmentTypes.test.name:
-                # Create a subscription for this users organization if its new
+                # Create a subscription for this users team if its new
                 create_default_subscription(db=db,
                                             user=user,
-                                            organization=org)
+                                            team=org)
         except Exception as e:
             logging.error(str(e))
             # TODO [High]: If this happens, we should delete the firebase
             #  user as well. Implement a proper crud.user.delete for this.
             crud.user.delete(db_session=db, id=user.id)
-            crud.organization.delete(db_session=db, id=org.id)
+            crud.team.delete(db_session=db, id=org.id)
             raise HTTPException(
                 status_code=500,
-                detail="We are unable to create the organization at this "
+                detail="We are unable to create the team at this "
                        "moment. Please contact support@maiot.io."
             )
     else:
@@ -139,8 +139,8 @@ async def create_user(
         if invite is None:
             raise HTTPException(
                 status_code=400,
-                detail=f"Organization names already taken. Please create a "
-                       f"unique name for your organization."
+                detail=f"Team names already taken. Please create a "
+                       f"unique name for your team."
             )
         # make sure invite isnt expired
         if datetime.utcnow().replace(tzinfo=pytz.utc) >= invite.expires_on:
@@ -164,19 +164,19 @@ async def create_user(
         # always a developer if invited
         user_in.role = RolesTypes.developer.name
 
-        # Set the organization
-        user_in.organization_id = org.id
+        # Set the team
+        user_in.team_id = org.id
 
         # create a user
         user = crud.user.create(db, obj_in=user_in)
 
-        # add this user to all workspaces in organization
-        for ws in user.organization.workspaces:
+        # add this user to all workspaces in team
+        for ws in user.team.workspaces:
             crud.workspace.add_user(db, ws_id=ws.id, user=user)
 
     # We add a default workspace
     # work_in = WorkspaceInDB(name='Default Workspace',
-    #                         organization_id=user.organization_id,
+    #                         team_id=user.team_id,
     #                         user_ids=[user.id])
     # ws_out = crud.workspace.create(db, obj_in=work_in)
 
@@ -184,7 +184,7 @@ async def create_user(
     identify_user(user.id, user.email, user.full_name)
     associate_group(
         user.id, org.id, org.name,
-        {'employees': crud.organization.count_users_in_org(db, org.id)})
+        {'employees': crud.team.count_users_in_org(db, org.id)})
     track_event(user.id, CREATE_USER, metadata={})
 
     return user
@@ -277,7 +277,7 @@ def delete_user(
             ),
         )
 
-    n_ds = len(user.organization.datasources)
+    n_ds = len(user.team.datasources)
     if n_ds > 1:
         raise HTTPException(
             status_code=404,

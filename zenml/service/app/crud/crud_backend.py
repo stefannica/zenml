@@ -12,7 +12,7 @@ class CRUDBackend(CRUDBase[Backend,
                            BackendUpdate]):
     def get_by_org(self, db: Session, *, org_id: str) -> List[Backend]:
         return db.query(Backend).filter(
-            Backend.organization_id == org_id).all()
+            Backend.team_id == org_id).all()
 
     def get_by_name(self, db: Session, *, name: str) -> List[Backend]:
         return db.query(Backend).filter(
@@ -20,7 +20,7 @@ class CRUDBackend(CRUDBase[Backend,
 
     def get_by_name_per_org(self, db: Session, *, name: str,
                             org_id: str) -> Backend:
-        bs = db.query(Backend).filter(Backend.organization_id == org_id).all()
+        bs = db.query(Backend).filter(Backend.team_id == org_id).all()
         for x in bs:
             if x.name == name:
                 return x
@@ -29,7 +29,7 @@ class CRUDBackend(CRUDBase[Backend,
                               backend_type: str,
                               backend_class: str) -> List[Backend]:
         return db.query(Backend).filter(
-            Backend.organization_id == org_id).filter(
+            Backend.team_id == org_id).filter(
             Backend.backend_class == backend_class).filter(
             Backend.type == backend_type).all()
 

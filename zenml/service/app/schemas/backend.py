@@ -14,7 +14,7 @@ class BackendBase(BaseModel):
 class BackendInDB(BackendBase):
     id: Optional[str] = None
     user_id: str = None
-    organization_id: str = None
+    team_id: str = None
     created_at: Optional[datetime] = None
 
     class Config:

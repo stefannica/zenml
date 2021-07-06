@@ -1,5 +1,5 @@
 from .crud_user import user
-from .crud_organization import organization
+from .crud_team import team
 from .crud_role import role
 from .crud_datasource import datasource
 from .crud_datasource_commit import datasource_commit

@@ -7,7 +7,7 @@ from pydantic import BaseModel
 # Shared properties
 class WorkspaceBase(BaseModel):
     name: Optional[str] = None
-    organization_id: Optional[str] = None
+    team_id: Optional[str] = None
     metadatastore_id: Optional[str] = None
 
 

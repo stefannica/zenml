@@ -44,7 +44,7 @@ class DatasourceBase(BaseModel):
 class DatasourceInDB(DatasourceBase):
     id: Optional[str] = None
     created_at: Optional[datetime] = None
-    organization_id: Optional[str] = None
+    team_id: Optional[str] = None
     origin_pipeline_id: Optional[str] = None
     metadatastore_id: Optional[str] = None
 

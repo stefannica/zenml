@@ -31,9 +31,9 @@ def get_datasources(
         current_user: DBUser = Depends(get_current_user),
 ):
     """
-    Gets all datasources of the logged in users organization.
+    Gets all datasources of the logged in users team.
     """
-    ds = crud.datasource.get_by_org(db, org_id=current_user.organization_id)
+    ds = crud.datasource.get_by_org(db, org_id=current_user.team_id)
     return ds
 
 
@@ -56,7 +56,7 @@ def get_datasource(
             detail="The datasource does not exist.",
         )
 
-    if ds.organization_id != current_user.organization_id:
+    if ds.team_id != current_user.team_id:
         raise HTTPException(
             status_code=HTTP_403_FORBIDDEN,
             detail="You are not authorized to access this datasource.",
@@ -112,7 +112,7 @@ def get_datasource_commit(
             status_code=404,
             detail="You are not allowed to fetch this commit!",
         )
-    if ds_commit.datasource.organization_id != current_user.organization_id:
+    if ds_commit.datasource.team_id != current_user.team_id:
         raise HTTPException(
             status_code=HTTP_403_FORBIDDEN,
             detail="You are not authorized to access this datasource.",
@@ -140,7 +140,7 @@ def get_single_commit(
             detail="The commit does not exist.",
         )
 
-    if ds_commit.datasource.organization_id != current_user.organization_id:
+    if ds_commit.datasource.team_id != current_user.team_id:
         raise HTTPException(
             status_code=HTTP_403_FORBIDDEN,
             detail="You are not authorized to access this datasource.",
@@ -239,7 +239,7 @@ def get_datasource_commit_distinct_col_values(
                    "processing!")
 
     return get_distinct_by_column(
-        get_bq_client(current_user.organization),
+        get_bq_client(current_user.team),
         commit.destination_args[DestinationKeys.PROJECT],
         commit.destination_args[DestinationKeys.DATASET],
         commit.destination_args[DestinationKeys.TABLE],
@@ -276,7 +276,7 @@ def get_datasource_commit_data_sample(
             detail="Requested sample size must by < 100 datapoints!",
         )
     return get_random_sample(
-        get_bq_client(current_user.organization),
+        get_bq_client(current_user.team),
         commit.destination_args[DestinationKeys.PROJECT],
         commit.destination_args[DestinationKeys.DATASET],
         commit.destination_args[DestinationKeys.TABLE],
@@ -301,7 +301,7 @@ async def create_datasource(
     track_event(current_user.id, CREATE_DATASOURCE, {})
 
     if any(x.name == datasource_in.name
-           for x in current_user.organization.datasources):
+           for x in current_user.team.datasources):
         raise HTTPException(
             status_code=400,
             detail="A datasource with this name already exists.",
@@ -320,7 +320,7 @@ async def create_datasource(
             detail=f"Provider with ID: {datasource_in.provider_id} "
                    f"does not exist.")
     # Check limits
-    check_billing_limits_datasources(db, org=current_user.organization)
+    check_billing_limits_datasources(db, org=current_user.team)
 
     # Lint
     datagen_source = source_factory.get_single_source(datasource_in.source)
@@ -339,7 +339,7 @@ async def create_datasource(
     # All pipelines have this one metadata store
     metadatastore = create_md_store_db(
         db,
-        current_user.organization_id,
+        current_user.team_id,
         'datagen'
     )
 
@@ -350,7 +350,7 @@ async def create_datasource(
             current_user=current_user,
             pipe_in=PipelineCreate(
                 name='{}_{}_{}'.format(
-                    current_user.organization_id.replace('-', '_')[0:15],
+                    current_user.team_id.replace('-', '_')[0:15],
                     sanitize_name(datasource_in.name),
                     int(time.time())),
                 pipeline_config={},
@@ -361,7 +361,7 @@ async def create_datasource(
         # Then persist the datasource
         datasource_db = DatasourceInDB(
             **jsonable_encoder(datasource_in),
-            organization_id=current_user.organization_id,
+            team_id=current_user.team_id,
             origin_pipeline_id=pipeline.id,
             metadatastore_id=metadatastore.id,
         )
@@ -393,7 +393,7 @@ async def create_datasource_commit(*,
 
     # Get the datasource and make checks
     ds = crud.datasource.get(db, id=ds_id)
-    if ds.organization_id != current_user.organization_id:
+    if ds.team_id != current_user.team_id:
         raise HTTPException(
             status_code=400,
             detail="You are not allowed to edit this datasource.",
@@ -409,7 +409,7 @@ async def create_datasource_commit(*,
         ds_commit_in.message = 'Latest commit of {}'.format(ds.name)
 
     # Create the datagen config
-    org = current_user.organization
+    org = current_user.team
     additional_args = dict()
 
     additional_args[DatalineKeys.DATASOURCE] = {

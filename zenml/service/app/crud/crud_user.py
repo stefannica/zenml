@@ -131,7 +131,7 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
             email=obj_in.email,
             full_name=obj_in.full_name,
             firebase_id=obj_in.firebase_id,
-            organization_id=obj_in.organization_id,
+            team_id=obj_in.team_id,
             role_id=role_id,
         )
         db.add(db_obj)
@@ -155,16 +155,16 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
             logging.info("User workspace deleted: {}".format(ws.name))
 
         # delete datasource
-        # assert len(user_obj.organization.datasources) <= 1
-        # for ds in user_obj.organization.datasources:
+        # assert len(user_obj.team.datasources) <= 1
+        # for ds in user_obj.team.datasources:
         #     assert ds.datasource_type == 'datasourcebq'
         #     crud.datasource.delete(db=db, id=ds.id)
         #     logging.info("User datasource deleted: {}".format(ds.name))
 
-        # delete organization
-        org_id = user_obj.organization.id
-        crud.organization.delete(db=db, id=org_id)
-        logging.info("User organization deleted: {}".format(
+        # delete team
+        org_id = user_obj.team.id
+        crud.team.delete(db=db, id=org_id)
+        logging.info("User team deleted: {}".format(
             org_id))
 
         # delete firebase

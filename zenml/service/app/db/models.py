@@ -16,16 +16,16 @@ users_workspaces = Table(
 )
 
 
-class Organization(Base):
+class Team(Base):
     id = Column(GUID(), primary_key=True, index=True, default=uuid4)
     name = Column(String, unique=True, index=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
     # Relationship
-    users = relationship("User", back_populates="organization")
-    workspaces = relationship("Workspace", back_populates="organization")
-    datasources = relationship("Datasource", back_populates="organization")
-    pipelines = relationship("Pipeline", back_populates="organization")
+    users = relationship("User", back_populates="team")
+    workspaces = relationship("Workspace", back_populates="team")
+    datasources = relationship("Datasource", back_populates="team")
+    pipelines = relationship("Pipeline", back_populates="team")
 
 
 class Role(Base):
@@ -43,13 +43,13 @@ class User(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
     # FK
-    organization_id = Column(GUID(),
-                             ForeignKey('organization.id'),
+    team_id = Column(GUID(),
+                             ForeignKey('team.id'),
                              nullable=True)
     role_id = Column(GUID(), ForeignKey('role.id'), nullable=True)
 
     # Relationship
-    organization = relationship("Organization", back_populates="users")
+    team = relationship("Team", back_populates="users")
     role = relationship("Role", back_populates="users")
     pipeline_runs = relationship("PipelineRun", back_populates="user")
     workspaces = relationship("Workspace",
@@ -67,12 +67,12 @@ class Datasource(Base):
     type = Column(String)
 
     # FK
-    organization_id = Column(GUID(), ForeignKey('organization.id'))
+    team_id = Column(GUID(), ForeignKey('team.id'))
     metadatastore_id = Column(GUID(), ForeignKey('metadatastore.id'))
     origin_pipeline_id = Column(GUID(), ForeignKey('pipeline.id'), index=True)
 
     # Relationship
-    organization = relationship("Organization", back_populates="datasources")
+    team = relationship("Team", back_populates="datasources")
     datasource_commits = relationship("DatasourceCommit",
                                       back_populates="datasource")
     metadatastore = relationship("Metadatastore", back_populates="datasource")
@@ -100,11 +100,11 @@ class Workspace(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
     # FK
-    organization_id = Column(GUID(), ForeignKey('organization.id'))
+    team_id = Column(GUID(), ForeignKey('team.id'))
     metadatastore_id = Column(GUID(), ForeignKey('metadatastore.id'))
 
     # Relationship
-    organization = relationship("Organization", back_populates="workspaces")
+    team = relationship("Team", back_populates="workspaces")
     metadatastore = relationship("Metadatastore", back_populates="workspace")
     pipelines = relationship("Pipeline", back_populates="workspace")
     users = relationship("User",
@@ -136,12 +136,12 @@ class Pipeline(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
     # FK
-    organization_id = Column(GUID(), ForeignKey('organization.id'))
+    team_id = Column(GUID(), ForeignKey('team.id'))
     workspace_id = Column(GUID(), ForeignKey('workspace.id'), nullable=True)
     user_id = Column(GUID(), ForeignKey('user.id'), index=True)
 
     # Relationship
-    organization = relationship("Organization", back_populates="pipelines")
+    team = relationship("Team", back_populates="pipelines")
     pipeline_runs = relationship("PipelineRun",
                                  back_populates="pipeline",
                                  lazy="joined")
@@ -206,6 +206,6 @@ class Backend(Base):
 
     # FK
     user_id = Column(GUID(), ForeignKey('user.id'), index=True)
-    organization_id = Column(GUID(),
-                             ForeignKey('organization.id'),
+    team_id = Column(GUID(),
+                             ForeignKey('team.id'),
                              nullable=True)

@@ -43,7 +43,7 @@ def create_backend(
         )
 
     if crud.backend.get_by_name_per_org(db, name=backend_in.name,
-                                        org_id=current_user.organization_id) \
+                                        org_id=current_user.team_id) \
             is not None:
         raise HTTPException(
             status_code=400,
@@ -57,7 +57,7 @@ def create_backend(
         backend_class=backend_in.backend_class,
         provider_id=backend_in.provider_id,
         user_id=current_user.id,
-        organization_id=current_user.organization_id,
+        team_id=current_user.team_id,
     ))
     return backend
 
@@ -71,4 +71,4 @@ def get_loggedin_backend(
     Gets the logged in users backend details
     """
     # segment track
-    return current_user.organization.backends
+    return current_user.team.backends

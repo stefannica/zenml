@@ -5,7 +5,7 @@
 # from sqlalchemy.orm import Session
 #
 # from app.config import GCP_PROJECT
-# from app.crud import organization
+# from app.crud import team
 # from app.crud.base import CRUDBase
 # from app.db.models import DatasourceImage, Datasource
 # from app.schemas.datasource import DatasourceImageInDB, DatasourceImageUpdate
@@ -17,7 +17,7 @@
 #     def get_by_org(self, db_session: Session, *, org_id: str) \
 #             -> List[DatasourceImage]:
 #         return db_session.query(DatasourceImage).filter(
-#             DatasourceImage.organization_id == org_id).all()
+#             DatasourceImage.team_id == org_id).all()
 #
 #     def create(self, db_session: Session, *,
 #                obj_in: DatasourceImageInDB) -> DatasourceImage:
@@ -69,7 +69,7 @@
 #
 #         # persist list of objects newline-delimited in clients storage bucket
 #         internal_gcs_client = storage.Client(project=GCP_PROJECT)
-#         org = organization.get(db_session, obj_in.organization_id)
+#         org = team.get(db_session, obj_in.team_id)
 #
 #         internal_bucket_obj = internal_gcs_client.bucket(org.bucket_name)
 #         internal_blob_name = "datasource-image/{}.txt".format(obj_in.name)
@@ -81,7 +81,7 @@
 #
 #         db_obj = DatasourceImage(
 #             name=obj_in.name,
-#             organization_id=obj_in.organization_id,
+#             team_id=obj_in.team_id,
 #             client_storage_path=obj_in.client_storage_path,
 #             internal_file_list_path=file_list_blob_path,
 #             n_samples=len(file_list),

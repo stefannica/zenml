@@ -3,7 +3,7 @@ import logging
 from sqlalchemy.exc import IntegrityError
 
 from app import crud
-from app.schemas.organization import OrganizationCreate, OrganizationUpdate
+from app.schemas.team import TeamCreate, TeamUpdate
 from app.schemas.role import RoleCreate
 from app.schemas.workspace import WorkspaceInDB
 from app.utils.enums import RolesTypes
@@ -20,17 +20,17 @@ async def init_db(db_session):
     # But if you don't want to use migrations, create
     # the tables un-commenting the next line
     # Base.metadata.create_all(bind=engine)
-    # create base organization
-    organization_in = OrganizationCreate(name='ZenML Organization Inc')
+    # create base team
+    team_in = TeamCreate(name='ZenML Team Inc')
     try:
-        org_out = crud.organization.create(db_session, obj_in=organization_in)
+        org_out = crud.team.create(db_session, obj_in=team_in)
     except IntegrityError:
         logging.warning(
             "Tried to bootstrap DB but demo org already exists!")
         return
-    org_out = crud.organization.update(
+    org_out = crud.team.update(
         db_session,
-        obj_in=OrganizationUpdate(),
+        obj_in=TeamUpdate(),
         db_obj=org_out
     )
 
@@ -46,5 +46,5 @@ async def init_db(db_session):
 
     # create default workspace
     work_in = WorkspaceInDB(name='Default Workspace',
-                            organization_id=org_out.id)
+                            team_id=org_out.id)
     crud.workspace.create(db_session, obj_in=work_in)

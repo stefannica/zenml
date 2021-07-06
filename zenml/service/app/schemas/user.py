@@ -12,7 +12,7 @@ class UserBase(BaseModel):
 
 # Shared properties
 class UserInDBBase(UserBase):
-    organization_id: Optional[str] = None
+    team_id: Optional[str] = None
 
 
 class UserInDB(UserInDBBase):
@@ -28,7 +28,7 @@ class UserInDB(UserInDBBase):
 class UserCreate(UserInDBBase):
     password: str = None
     role: str = None
-    organization_name: str = None
+    team_name: str = None
 
 
 # Properties to receive via API on update
@@ -42,5 +42,5 @@ class User(UserInDB):
 
 
 # Additional properties to return via API
-class UserInOrganization(UserInDB):
+class UserInTeam(UserInDB):
     role: str = None

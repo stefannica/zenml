@@ -72,7 +72,7 @@ def get_pipeline(
         )
 
     if not crud.user.is_admin(current_user):
-        if p.organization_id != current_user.organization_id:
+        if p.team_id != current_user.team_id:
             raise HTTPException(
                 status_code=HTTP_403_FORBIDDEN,
                 detail="You are not authorized to access this pipeline.",
@@ -124,7 +124,7 @@ def get_pipeline_run(
         )
 
     if not crud.user.is_admin(current_user):
-        if p.organization_id != current_user.organization_id:
+        if p.team_id != current_user.team_id:
             raise HTTPException(
                 status_code=HTTP_403_FORBIDDEN,
                 detail="You are not authorized to access this pipeline.",
@@ -185,7 +185,7 @@ def get_pipeline_artifacts(
                    "or is still running."
         )
 
-    storage_client = get_storage_client(current_user.organization)
+    storage_client = get_storage_client(current_user.team)
     store = get_md_store_utils_by_workspace(db,
                                             workspace=run.pipeline.workspace)
 
@@ -382,7 +382,7 @@ def get_pipeline_run_user(
 
     if not crud.user.is_admin(current_user):
         # only if youre part of the same org
-        if run.user.organization_id != current_user.organization_id:
+        if run.user.team_id != current_user.team_id:
             raise HTTPException(
                 status_code=HTTP_403_FORBIDDEN,
                 detail="You are not authorized to access this user.",
@@ -418,7 +418,7 @@ async def create_pipeline(
                    "workspace!"
         )
 
-    org = current_user.organization
+    org = current_user.team
 
     if pipe_in.pipeline_type != PipelineTypes.datagen.name:
         # TODO: [MEDIUM] This stuff needs to be cleaned up
@@ -488,7 +488,7 @@ async def create_pipeline(
     pipeline = PipelineInDB(
         name=pipe_in.name,
         pipeline_config=pipe_in.pipeline_config,
-        organization_id=current_user.organization_id,
+        team_id=current_user.team_id,
         workspace_id=pipe_in.workspace_id,
         user_id=current_user.id,
     )
@@ -511,7 +511,7 @@ async def create_pipeline_run(
     track_event(current_user.id, CREATE_PIPELINE_RUN, {})
 
     # users org
-    org = current_user.organization
+    org = current_user.team
 
     # get pipeline
     pipeline = get_pipeline(pipeline_id=pipeline_id,
@@ -565,7 +565,7 @@ async def create_pipeline_run(
                      pipe_run_in).build()
 
     pipe_run_in.run_config = run.get_run_config()
-    cloud_job_prefix = '{}_{}'.format(current_user.organization_id,
+    cloud_job_prefix = '{}_{}'.format(current_user.team_id,
                                       str(uuid4()).replace('-', '')).lower()
 
     start_time = datetime.now(timezone.utc)
@@ -669,7 +669,7 @@ def update_pipeline_run(
         )
     )
 
-    client = get_bq_client(run.user.organization)
+    client = get_bq_client(run.user.team)
     n_datapoints = get_table_count(
         client,
         run.datasource_commit.destination_args[DestinationKeys.PROJECT],
@@ -701,6 +701,6 @@ def update_pipeline_run(
             ))
     else:
         # report pipeline
-        create_usage_record(run.pipeline.organization, n_datapoints)
+        create_usage_record(run.pipeline.team, n_datapoints)
 
     return run
