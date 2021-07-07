@@ -11,12 +11,9 @@ from app import crud
 from app.config import ENV_TYPE
 from app.db.models import User as DBUser
 from app.schemas.team import TeamCreate
-from app.schemas.user import User, UserUpdate
-from app.schemas.user import UserCreate
+from app.schemas.user import User, UserUpdate, UserCreate
 from app.utils.db import get_db
-from app.utils.enums import EnvironmentTypes
-from app.utils.enums import InviteStatus
-from app.utils.enums import RolesTypes
+from app.utils.enums import EnvironmentTypes, InviteStatus, RolesTypes
 from app.utils.security import get_current_admin, \
     get_current_user
 
@@ -46,7 +43,6 @@ def get_loggedin_user(
     """
     Get current user.
     """
-    # segment track
     return current_user
 
 
@@ -180,13 +176,6 @@ async def create_user(
     #                         user_ids=[user.id])
     # ws_out = crud.workspace.create(db, obj_in=work_in)
 
-    # segment track
-    identify_user(user.id, user.email, user.full_name)
-    associate_group(
-        user.id, org.id, org.name,
-        {'employees': crud.team.count_users_in_org(db, org.id)})
-    track_event(user.id, CREATE_USER, metadata={})
-
     return user
 
 
@@ -199,9 +188,6 @@ def get_user_by_id(
     """
     Get a specific user by id.
     """
-    # segment track
-    track_event(current_user.id, GET_USER_BY_ID, {})
-
     user = crud.user.get(db, id=user_id)
     if not user:
         raise HTTPException(
@@ -222,9 +208,6 @@ def update_user(
     """
     Update a user.
     """
-    # segment track
-    track_event(current_user.id, UPDATE_USER, {})
-
     user = crud.user.get(db, id=user_id)
     if not user:
         raise HTTPException(

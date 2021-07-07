@@ -5,8 +5,7 @@ from pydantic import BaseModel
 
 # Shared properties
 class MetadatastoreBase(BaseModel):
-    orchestrator_host: Optional[str] = None
-    internal_host: Optional[str] = None
+    host: Optional[str] = None
     port: Optional[int] = None
     database: Optional[str] = None
     username: Optional[str] = None

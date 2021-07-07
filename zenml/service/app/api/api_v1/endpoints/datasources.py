@@ -17,8 +17,8 @@ from app.schemas.datasource import Datasource, DatasourceInDB, \
 from app.schemas.pipeline import PipelineCreate
 from app.schemas.pipelinerun import PipelineRunCreate
 from app.utils.db import get_db
-from app.utils.enums import PipelineStatusTypes
-from app.utils.enums import PipelineTypes, PipelineRunTypes
+from app.utils.enums import PipelineStatusTypes, PipelineTypes, \
+    PipelineRunTypes
 from app.utils.misc import sanitize_name
 from app.utils.security import get_current_user
 
@@ -46,9 +46,6 @@ def get_datasource(
     """
     Gets the datasource specified by ID
     """
-    # segment track
-    track_event(current_user.id, GET_DATASOURCE, {})
-
     ds = crud.datasource.get(db, id=ds_id)
     if not ds:
         raise HTTPException(
@@ -75,9 +72,6 @@ def get_commits(
     """
     Gets all the commits of the specified datasource.
     """
-    # segment track
-    track_event(current_user.id, GET_COMMITS, {})
-
     # verify ownership
     ds = get_datasource(
         ds_id=ds_id,
@@ -98,9 +92,6 @@ def get_datasource_commit(
     """
     Gets commit of one datasource
     """
-    # segment track
-    track_event(current_user.id, GET_DATASOURCE_COMMIT, {})
-
     ds_commit = crud.datasource_commit.get(db_session=db, id=commit_id)
     if not ds_commit:
         raise HTTPException(
@@ -130,9 +121,6 @@ def get_single_commit(
     """
     Gets commit of one datasource
     """
-    # segment track
-    track_event(current_user.id, GET_SINGLE_COMMIT, {})
-
     ds_commit = crud.datasource_commit.get(db_session=db, id=commit_id)
     if not ds_commit:
         raise HTTPException(
@@ -174,9 +162,6 @@ def get_datasource_commit_metadata(
     """
     Gets distinct values from column name. Maximum 1000 distinct values.
     """
-    # segment track
-    track_event(current_user.id, GET_DATASOURCE_COMMIT_METADATA, {})
-
     commit = get_datasource_commit(ds_id, commit_id, db, current_user)
     status = crud.datasource_commit.get_datagen_run(db, commit.id).status
     if status != PipelineStatusTypes.Succeeded.name:
@@ -202,9 +187,6 @@ def get_datasource_commit_schema(
     """
     Gets all the bigquery datasources of the logged in user
     """
-    # segment track
-    track_event(current_user.id, GET_DATASOURCE_COMMIT_SCHEMA, {})
-
     commit = get_datasource_commit(ds_id, commit_id, db, current_user)
     status = crud.datasource_commit.get_datagen_run(db, commit.id).status
     if status != PipelineStatusTypes.Succeeded.name:
@@ -227,9 +209,6 @@ def get_datasource_commit_distinct_col_values(
     """
     Gets distinct values from column name. Maximum 1000 distinct values.
     """
-    # segment track
-    track_event(current_user.id, GET_DATASOURCE_COMMIT_DISTINCT_COL_VALUES, {})
-
     commit = get_datasource_commit(ds_id, commit_id, db, current_user)
     status = crud.datasource_commit.get_datagen_run(db, commit.id).status
     if status != PipelineStatusTypes.Succeeded.name:
@@ -258,9 +237,6 @@ def get_datasource_commit_data_sample(
     """
     Gets a random sample of data from datasource
     """
-    # segment track
-    track_event(current_user.id, GET_DATASOURCE_COMMIT_DATA_SAMPLE, {})
-
     commit = get_datasource_commit(ds_id, commit_id, db, current_user)
     status = crud.datasource_commit.get_datagen_run(db, commit.id).status
 
@@ -297,9 +273,6 @@ async def create_datasource(
     """
     Create new datasource for logged in user.
     """
-    # segment track
-    track_event(current_user.id, CREATE_DATASOURCE, {})
-
     if any(x.name == datasource_in.name
            for x in current_user.team.datasources):
         raise HTTPException(
@@ -388,9 +361,6 @@ async def create_datasource_commit(*,
                                    current_user: DBUser = Depends(
                                        get_current_user),
                                    ):
-    # segment track
-    track_event(current_user.id, CREATE_DATASOURCE_COMMIT, {})
-
     # Get the datasource and make checks
     ds = crud.datasource.get(db, id=ds_id)
     if ds.team_id != current_user.team_id:

@@ -22,7 +22,6 @@ from app.schemas.pipelinerun import PipelineRunUpdate, \
 from app.schemas.pipelinestep import PipelineStepInDB
 from app.schemas.user import UserBase
 from app.utils.db import get_db
-from app.utils.enums import OrchestratorTypes
 from app.utils.enums import PipelineStatusTypes, PipelineTypes, \
     PipelineRunTypes
 from app.utils.security import get_current_user
@@ -46,9 +45,6 @@ def get_loggedin_pipelines(
     """
     Gets the logged in users pipelines
     """
-    # segment track
-    track_event(current_user.id, GET_LOGGEDIN_PIPELINES, {})
-
     return crud.pipeline.get_by_user_id(db, user_id=current_user.id)
 
 
@@ -61,9 +57,6 @@ def get_pipeline(
     """
     Gets the pipeline specified by id
     """
-    # segment track
-    track_event(current_user.id, GET_PIPELINE, {})
-
     p = crud.pipeline.get(db, id=pipeline_id)
     if not p:
         raise HTTPException(
@@ -77,11 +70,6 @@ def get_pipeline(
                 status_code=HTTP_403_FORBIDDEN,
                 detail="You are not authorized to access this pipeline.",
             )
-
-    if ExpGlobalKeys.BQ_ARGS_ in p.pipeline_config:
-        p.pipeline_config.pop(EnvGlobal.BQ_ARGS)
-    if ExpGlobalKeys.CUSTOM_CODE_ in p.pipeline_config:
-        p.pipeline_config.pop(ExpGlobalKeys.CUSTOM_CODE_)
     return p
 
 
@@ -94,9 +82,6 @@ def get_pipeline_runs(
     """
     Gets all the runs for a specified pipeline.
     """
-    # segment track
-    track_event(current_user.id, GET_PIPELINE_RUNS, {})
-
     p = get_pipeline(pipeline_id, db, current_user)
     return p.pipeline_runs
 
@@ -112,9 +97,6 @@ def get_pipeline_run(
     """
     Gets a specific run for a specific pipeline
     """
-    # segment track
-    track_event(current_user.id, GET_PIPELINE_RUN, {})
-
     # First check if we are allowed to get this pipelines run
     p = crud.pipeline.get(db, id=pipeline_id)
     if not p:
@@ -156,9 +138,6 @@ def get_pipeline_artifacts(
     """
     Gets the artifact of any component within a pipeline run.
     """
-    # segment track
-    track_event(current_user.id, GET_PIPELINE_ARTIFACTS, {})
-
     # TODO: [LOW] Write a check that would ensure the component_type is within
     #  GDP component list
     run = get_pipeline_run(pipeline_id, pipeline_run_id, db, current_user)
@@ -220,9 +199,6 @@ def get_pipeline_artifact_uris(
     """
     Gets the artifact of any component within a pipeline run.
     """
-    # segment track
-    track_event(current_user.id, GET_PIPELINE_ARTIFACT_URIS, {})
-
     # TODO: [LOW] Write a check that would ensure the component_type is within
     #  GDP component list
 
@@ -270,9 +246,6 @@ def get_pipeline_logs(
     """
     Creates and returns a log file of a pipeline as a signed URL
     """
-    # segment track
-    track_event(current_user.id, GET_PIPELINE_LOGS, {})
-
     run = get_pipeline_run(pipeline_id, pipeline_run_id, db, current_user)
 
     if run.status == PipelineStatusTypes.NotStarted.name:
@@ -310,9 +283,6 @@ def get_hyperparameters_pipeline(
     """
     Gets all hyperparameters available for a specific run.
     """
-    # segment track
-    track_event(current_user.id, GET_HYPERPARAMETERS_PIPELINE, {})
-
     run = get_pipeline_run(pipeline_id, pipeline_run_id, db, current_user)
 
     if run.pipeline_run_type == PipelineRunTypes.datagen.name:
@@ -375,9 +345,6 @@ def get_pipeline_run_user(
     """
     Gets the pipeline runs author
     """
-    # segment track
-    track_event(current_user.id, GET_PIPELINE_RUN_USER, {})
-
     run = get_pipeline_run(pipeline_id, pipeline_run_id, db, current_user)
 
     if not crud.user.is_admin(current_user):
@@ -402,9 +369,6 @@ async def create_pipeline(
     """
     Creates a core engine pipeline
     """
-    # segment track
-    track_event(current_user.id, CREATE_PIPELINE, {})
-
     logging.info("User {} creating pipeline with config: {}".format(
         current_user.email, pipe_in.pipeline_config))
 
@@ -507,9 +471,6 @@ async def create_pipeline_run(
     """
     Create a pipeline run
     """
-    # segment track
-    track_event(current_user.id, CREATE_PIPELINE_RUN, {})
-
     # users org
     org = current_user.team
 
