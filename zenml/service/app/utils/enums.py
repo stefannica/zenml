@@ -9,7 +9,7 @@ class PipelineStatusTypes(Enum):
 
 
 class EnvironmentTypes(Enum):
-    development = 1
+    local = 1
     test = 2
     production = 3
 
