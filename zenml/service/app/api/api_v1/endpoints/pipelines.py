@@ -16,16 +16,15 @@ from app.db.models import User as DBUser
 from app.schemas.artifact import Artifact
 from app.schemas.datasource import DatasourceCommit
 from app.schemas.pipeline import PipelineCreate, Pipeline, PipelineInDB
-from app.schemas.pipelinerun import PipelineRunCreate, PipelineRunInDB
-from app.schemas.pipelinerun import PipelineRunUpdate, \
-    PipelineRunSlim
+from app.schemas.pipelinerun import PipelineRunCreate, PipelineRunInDB, \
+    PipelineRunUpdate, PipelineRunSlim
 from app.schemas.pipelinestep import PipelineStepInDB
 from app.schemas.user import UserBase
 from app.utils.db import get_db
 from app.utils.enums import PipelineStatusTypes, PipelineTypes, \
     PipelineRunTypes
 from app.utils.security import get_current_user
-from app.utils.security import reusable_oauth2
+from app.utils.security import oauth2_scheme
 
 router = APIRouter()
 
@@ -587,7 +586,7 @@ def update_pipeline_run(
         pipeline_id: str,
         pipeline_run_id: str,
         db: Session = Depends(get_db),
-        token: str = Security(reusable_oauth2),
+        token: str = Security(oauth2_scheme),
         pipe_run_in: PipelineRunUpdate = Body(
             ...,
         )

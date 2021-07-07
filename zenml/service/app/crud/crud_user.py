@@ -17,12 +17,6 @@ from app.utils.enums import PipelineStatusTypes, RolesTypes, PipelineRunTypes
 
 
 class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
-
-    def get_by_firebase_id(self, db: Session, *, firebase_id: str) \
-            -> Optional[User]:
-        return db.query(User).filter(
-            User.firebase_id == firebase_id).first()
-
     def get_by_email(self, db: Session, *, email: str) \
             -> Optional[User]:
         return db.query(User).filter(User.email == email).first()
