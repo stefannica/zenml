@@ -1,3 +1,4 @@
 __pycache__
 alembic/versions
 *.db
+reset_dev.sh
