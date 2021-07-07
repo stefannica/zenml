@@ -118,9 +118,6 @@ class Metadatastore(Base):
     workspace = relationship("Workspace",
                              uselist=False,
                              back_populates="metadatastore")
-    datasource = relationship("Datasource",
-                              uselist=False,
-                              back_populates="metadatastore")
 
 
 class Pipeline(Base):
@@ -180,15 +177,15 @@ class Schedule(Base):
     datasource_commit_id = Column(GUID(), ForeignKey('datasourcecommit.id'))
     user_id = Column(GUID(), ForeignKey('user.id'), index=True)
 
-    # Relationship
-    pipeline = relationship("Pipeline",
-                            back_populates="pipeline_runs")
-    datasource_commit = relationship("DatasourceCommit",
-                                     back_populates="pipeline_runs")
-    user = relationship("User", back_populates="pipeline_runs")
-
-    pipeline_steps = relationship("PipelineStep",
-                                  back_populates="pipeline_run")
+    # # Relationship
+    # pipeline_run = relationship("PipelineRun",
+    #                         back_populates="pipeline_runs")
+    # datasource_commit = relationship("DatasourceCommit",
+    #                                  back_populates="pipeline_runs")
+    # user = relationship("User", back_populates="pipeline_runs")
+    #
+    # pipeline_steps = relationship("PipelineStep",
+    #                               back_populates="pipeline_run")
 
 
 class PipelineStep(Base):

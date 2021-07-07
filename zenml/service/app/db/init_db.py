@@ -23,15 +23,15 @@ async def init_db(db_session):
     # create base team
     team_in = TeamCreate(name='ZenML Team Inc')
     try:
-        org_out = crud.team.create(db_session, obj_in=team_in)
+        team_out = crud.team.create(db_session, obj_in=team_in)
     except IntegrityError:
         logging.warning(
             "Tried to bootstrap DB but demo org already exists!")
         return
-    org_out = crud.team.update(
+    team_out = crud.team.update(
         db_session,
         obj_in=TeamUpdate(),
-        db_obj=org_out
+        db_obj=team_out
     )
 
     # create roles
@@ -43,8 +43,3 @@ async def init_db(db_session):
     operator_role_out = crud.role.create(db_session, obj_in=operator_role_in)
     creator_role_in = RoleCreate(type=RolesTypes.creator.name)
     creator_role_out = crud.role.create(db_session, obj_in=creator_role_in)
-
-    # create default workspace
-    work_in = WorkspaceInDB(name='Default Workspace',
-                            team_id=org_out.id)
-    crud.workspace.create(db_session, obj_in=work_in)

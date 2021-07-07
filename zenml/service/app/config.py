@@ -19,17 +19,18 @@ API_HOST = os.getenv("API_HOST", "http://0.0.0.0:8000")
 ENV_TYPE = os.getenv("ZENML_ENV_TYPE", EnvironmentTypes.local.name)
 
 # Postgres
-POSTGRES_ADDRESS = os.getenv("POSTGRES_ADDRESS", 'localhost')
-POSTGRES_PORT = os.getenv("POSTGRES_PORT", 5432)
-POSTGRES_DB = os.getenv('POSTGRES_DB', 'app')
-POSTGRES_USER = os.getenv('POSTGRES_USER', 'postgres')
-POSTGRES_PASSWORD = os.getenv('POSTGRES_PASSWORD',
-                              'ificatchyouwiththisinproductioniwillfindyouandendyou')
-SQLALCHEMY_DATABASE_URI = (
-    f"postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_ADDRESS}:"
-    f"{POSTGRES_PORT}/"
-    f"{POSTGRES_DB}"
-)
+# POSTGRES_ADDRESS = os.getenv("POSTGRES_ADDRESS", 'localhost')
+# POSTGRES_PORT = os.getenv("POSTGRES_PORT", 5432)
+# POSTGRES_DB = os.getenv('POSTGRES_DB', 'app')
+# POSTGRES_USER = os.getenv('POSTGRES_USER', 'postgres')
+# POSTGRES_PASSWORD = os.getenv('POSTGRES_PASSWORD',
+#                               'ificatchyouwiththisinproductioniwillfindyouandendyou')
+# SQLALCHEMY_DATABASE_URI = (
+#     f"postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_ADDRESS}:"
+#     f"{POSTGRES_PORT}/"
+#     f"{POSTGRES_DB}"
+# )
+SQLALCHEMY_DATABASE_URI = "sqlite:///./db/sql_app.db"
 
 # CORS
 BACKEND_CORS_ORIGINS = os.getenv(

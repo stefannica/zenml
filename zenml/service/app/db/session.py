@@ -8,10 +8,10 @@ from app import config
 
 engine = create_engine(
     config.SQLALCHEMY_DATABASE_URI,
-    pool_pre_ping=True,
-    pool_size=20,
-    max_overflow=60,
-    pool_timeout=2,
+    # pool_pre_ping=True,
+    # pool_size=20,
+    # max_overflow=60,
+    # pool_timeout=2,
 )
 
 db_session = scoped_session(
