@@ -17,6 +17,7 @@ OPENAPI_URL = API_PREFIX_STR + '/openapi.json'
 PROJECT_NAME = os.getenv("PROJECT_NAME", 'ZenML Service')
 API_HOST = os.getenv("API_HOST", "http://0.0.0.0:8000")
 ENV_TYPE = os.getenv("ZENML_ENV_TYPE", EnvironmentTypes.local.name)
+DEFAULT_USER_EMAIL = os.getenv('ZENML_DEFAULT_EMAIL', 'default@xyz.com')
 
 # Postgres
 # POSTGRES_ADDRESS = os.getenv("POSTGRES_ADDRESS", 'localhost')

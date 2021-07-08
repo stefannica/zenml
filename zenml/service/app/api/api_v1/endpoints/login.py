@@ -13,7 +13,7 @@ router = APIRouter()
 
 
 def login(db, email: Text, password: Text) -> Token:
-    return Token(access_token='', token_type='bearer')
+    return Token(access_token='test', token_type='bearer')
 
 
 @router.post("/login/access-token", response_model=Token, tags=["login"])

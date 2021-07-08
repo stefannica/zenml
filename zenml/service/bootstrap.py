@@ -1,9 +1,8 @@
 import logging
+import os
 import time
 
 from alembic import config
-import glob, os
-
 from app.db.init_db import init_db
 from app.db.session import db_session, engine
 
@@ -48,7 +47,7 @@ async def init(connection_retries=5):
                         lines.insert(8, '\nimport app\n')
                         f.writelines(lines)
 
-                            # upgrade the head
+                        # upgrade the head
             upgrade = ['upgrade', 'head']
             config.main(argv=upgrade)
 
@@ -71,4 +70,5 @@ async def main():
 
 if __name__ == "__main__":
     import asyncio
+
     asyncio.get_event_loop().run_until_complete(main())

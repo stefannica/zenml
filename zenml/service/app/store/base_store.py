@@ -1,4 +1,4 @@
-#  Copyright (c) maiot GmbH 2020. All Rights Reserved.
+#  Copyright (c) maiot GmbH 2021. All Rights Reserved.
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -11,16 +11,31 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
 #  or implied. See the License for the specific language governing
 #  permissions and limitations under the License.
+from abc import abstractmethod
 
-import os
+from zenml.logger import get_logger
 
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+logger = get_logger(__name__)
 
-from .config import *
-from .base import *
-from .version import *
-from .pipeline import *
-from .datasource import *
-from .step import *
-from .example import *
-from .new.service import *
+
+class BaseServiceStore:
+    """ZenML Service DB definition.
+
+    This defines the implementation of the DB the service is using.
+    """
+
+    @abstractmethod
+    def get_sqlalchemy_db_uri(self):
+        pass
+
+    @abstractmethod
+    @property
+    def exists(self):
+        pass
+
+    @abstractmethod
+    def do_initialization_asserts(self):
+        pass
+
+    def bootstrap(self):
+        pass

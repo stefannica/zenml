@@ -31,7 +31,7 @@ app.include_router(api_router, prefix=config.API_PREFIX_STR)
 @app.get("/")
 def ping():
     """
-    Serves as a fake heartbeat
+    Serves as a fake heartbeat.
     """
     return 'Im alive!'
 

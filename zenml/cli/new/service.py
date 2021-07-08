@@ -1,4 +1,4 @@
-#  Copyright (c) maiot GmbH 2020. All Rights Reserved.
+#  Copyright (c) maiot GmbH 2021. All Rights Reserved.
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -12,15 +12,27 @@
 #  or implied. See the License for the specific language governing
 #  permissions and limitations under the License.
 
-import os
+import click
 
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+from zenml.cli.cli import cli
 
-from .config import *
-from .base import *
-from .version import *
-from .pipeline import *
-from .datasource import *
-from .step import *
-from .example import *
-from .new.service import *
+
+@cli.group(help="Utilities for service")
+def service():
+    """Service group"""
+    pass
+
+
+@service.command(help="Start the service")
+def up():
+    click.echo('Starting ZenML Service: \n')
+
+
+@service.command(help="Stop the service")
+def down():
+    click.echo('Stopping ZenML Service: \n')
+
+
+@service.command(help="Restart the service")
+def restart():
+    click.echo('Stopping ZenML Service: \n')

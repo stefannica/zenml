@@ -11,16 +11,32 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
 #  or implied. See the License for the specific language governing
 #  permissions and limitations under the License.
+"""ZenML Controller"""
 
-import os
+from zenml.logger import get_logger
 
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+logger = get_logger(__name__)
 
-from .config import *
-from .base import *
-from .version import *
-from .pipeline import *
-from .datasource import *
-from .step import *
-from .example import *
-from .new.service import *
+
+class Controller:
+    """ZenML Service Controller definition.
+
+    The controller orchestrates the Service.
+    """
+    def __init__(self):
+        pass
+
+    def start(self):
+        pass
+
+    def stop(self):
+        pass
+
+    def restart(self):
+        pass
+
+    def bootstrap(self):
+        pass
+
+    def is_service_running(self):
+        pass

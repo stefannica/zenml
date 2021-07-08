@@ -8,6 +8,7 @@ from sqlalchemy.orm import Session
 from starlette.status import HTTP_403_FORBIDDEN
 
 from app import crud
+from app.config import DEFAULT_USER_EMAIL
 from app.config import ENV_TYPE
 from app.crud.base import CRUDBase
 from app.db.models import User, PipelineRun
@@ -20,6 +21,10 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
     def get_by_email(self, db: Session, *, email: str) \
             -> Optional[User]:
         return db.query(User).filter(User.email == email).first()
+
+    def get_default_user(self, db: Session) \
+            -> Optional[User]:
+        return self.get_by_email(db, email=DEFAULT_USER_EMAIL)
 
     def get_total_users(self, db: Session) \
             -> Optional[User]:
@@ -148,22 +153,11 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
             crud.workspace.delete(db=db, id=ws.id)
             logging.info("User workspace deleted: {}".format(ws.name))
 
-        # delete datasource
-        # assert len(user_obj.team.datasources) <= 1
-        # for ds in user_obj.team.datasources:
-        #     assert ds.datasource_type == 'datasourcebq'
-        #     crud.datasource.delete(db=db, id=ds.id)
-        #     logging.info("User datasource deleted: {}".format(ds.name))
-
         # delete team
         org_id = user_obj.team.id
         crud.team.delete(db=db, id=org_id)
         logging.info("User team deleted: {}".format(
             org_id))
-
-        # delete firebase
-        if user_obj.firebase_id is not None:
-            firebase.delete_user(user_obj.firebase_id)
 
         db.delete(user_obj)
         db.commit()
