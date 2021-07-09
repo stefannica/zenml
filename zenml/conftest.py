@@ -23,7 +23,7 @@ import pytest
 import zenml
 from zenml.backends import BaseBackend
 from zenml.datasources import BaseDatasource
-from zenml.metadata import ZenMLMetadataStore
+from zenml.metadata import BaseMetadataStore
 from zenml.pipelines import BasePipeline
 from zenml.repo import Repository, ZenMLConfig
 from zenml.steps import BaseStep
@@ -208,7 +208,7 @@ def equal_pipelines(equal_backends, equal_steps, equal_datasources):
 
 @pytest.fixture
 def equal_md_stores():
-    def wrapper(md1: ZenMLMetadataStore, md2: ZenMLMetadataStore):
+    def wrapper(md1: BaseMetadataStore, md2: BaseMetadataStore):
         # There can be a "None" datasource in a pipeline
         if md1 is None and md2 is None:
             return True

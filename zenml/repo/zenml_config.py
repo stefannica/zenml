@@ -16,7 +16,7 @@
 import os
 from typing import Text, Optional, Dict, Type
 
-from zenml.metadata import ZenMLMetadataStore
+from zenml.metadata import BaseMetadataStore
 from zenml.repo import ArtifactStore
 from zenml.repo.constants import ZENML_CONFIG_NAME, \
     ARTIFACT_STORE_DEFAULT_DIR, PIPELINES_DEFAULT_DIR_NAME, \
@@ -57,7 +57,7 @@ class ZenMLConfig:
         self.raw_config = yaml_utils.read_yaml(self.config_path)
 
         # Load self vars in init to be clean
-        self.metadata_store: Optional[ZenMLMetadataStore] = None
+        self.metadata_store: Optional[BaseMetadataStore] = None
         self.artifact_store: Optional[ArtifactStore] = None
         self.pipelines_dir: Text = ''
 
@@ -80,7 +80,7 @@ class ZenMLConfig:
     @staticmethod
     def to_config(path: Text,
                   artifact_store_path: Text = None,
-                  metadata_store: Optional[Type[ZenMLMetadataStore]] = None,
+                  metadata_store: Optional[Type[BaseMetadataStore]] = None,
                   pipelines_dir: Text = None):
         """
         Creates a default .zenml config at path/zenml/.zenml_config.
@@ -150,12 +150,12 @@ class ZenMLConfig:
         assert PIPELINES_DIR_KEY in config_dict
 
         self.artifact_store = ArtifactStore(config_dict[ARTIFACT_STORE_KEY])
-        self.metadata_store = ZenMLMetadataStore.from_config(
+        self.metadata_store = BaseMetadataStore.from_config(
             config=config_dict[METADATA_KEY]
         )
         self.pipelines_dir = config_dict[PIPELINES_DIR_KEY]
 
-    def get_metadata_store(self) -> ZenMLMetadataStore:
+    def get_metadata_store(self) -> BaseMetadataStore:
         """Get metadata store from config."""
         return self.metadata_store
 
@@ -177,7 +177,7 @@ class ZenMLConfig:
         self.artifact_store = ArtifactStore(artifact_store_path)
         self.save()
 
-    def set_metadata_store(self, metadata_store: ZenMLMetadataStore):
+    def set_metadata_store(self, metadata_store: BaseMetadataStore):
         """
         Updates artifact store to point to path.
 

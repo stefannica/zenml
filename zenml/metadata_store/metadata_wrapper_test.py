@@ -18,7 +18,7 @@ import pytest
 
 from zenml.enums import GDPComponent
 from zenml.enums import PipelineStatusTypes
-from zenml.metadata import ZenMLMetadataStore
+from zenml.metadata import BaseMetadataStore
 from zenml.pipelines import TrainingPipeline
 from zenml.standards.standard_keys import MLMetadataKeys
 
@@ -43,7 +43,7 @@ def test_from_config():
 
     # throws because base MDStore is not in the factory
     with pytest.raises(AssertionError):
-        _ = ZenMLMetadataStore.from_config(config)
+        _ = BaseMetadataStore.from_config(config)
 
 
 def test_get_pipeline_status(repo):

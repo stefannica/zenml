@@ -23,7 +23,7 @@ from zenml.enums import ArtifactStoreTypes
 from zenml.utils.print_utils import to_pretty_string, PrintStyles
 
 
-class ArtifactStore:
+class BaseArtifactStore:
     """Base class for all ZenML datasources.
 
     Every ZenML datasource should override this class.
@@ -45,6 +45,10 @@ class ArtifactStore:
 
     def __repr__(self):
         return to_pretty_string(self.path, style=PrintStyles.PPRINT)
+
+    @staticmethod
+    def get_default():
+        return BaseArtifactStore(path='.')
 
     @staticmethod
     def get_component_name_from_uri(artifact_uri: Text):
@@ -74,7 +78,7 @@ class ArtifactStore:
             path = os.path.join(
                 GlobalConfig.get_config_dir(),
                 self.unique_id,
-                ArtifactStore.get_component_name_from_uri(artifact_uri),
+                BaseArtifactStore.get_component_name_from_uri(artifact_uri),
                 path_utils.get_parent(artifact_uri)  # unique ID from MLMD
             )
 

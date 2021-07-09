@@ -25,7 +25,7 @@ from zenml.exceptions import AlreadyExistsException
 from zenml.exceptions import EmptyDatasourceException
 from zenml.exceptions import InitializationException
 from zenml.logger import get_logger
-from zenml.metadata import ZenMLMetadataStore
+from zenml.metadata import BaseMetadataStore
 from zenml.repo import Repository, ArtifactStore
 from zenml.standards import standard_keys as keys
 from zenml.utils import path_utils
@@ -50,7 +50,7 @@ class BaseDatasource:
             name: Text,
             _id: Text = None,
             backend=None,
-            metadata_store: Optional[ZenMLMetadataStore] = None,
+            metadata_store: Optional[BaseMetadataStore] = None,
             artifact_store: Optional[ArtifactStore] = None,
             commits: Optional[Dict] = None,
             *args,
@@ -80,11 +80,11 @@ class BaseDatasource:
 
         # Metadata store
         if metadata_store:
-            self.metadata_store: ZenMLMetadataStore = metadata_store
+            self.metadata_store: BaseMetadataStore = metadata_store
         else:
             # use default
             try:
-                self.metadata_store: ZenMLMetadataStore = \
+                self.metadata_store: BaseMetadataStore = \
                     Repository.get_instance().get_default_metadata_store()
             except InitializationException:
                 self.metadata_store = None
@@ -190,7 +190,7 @@ class BaseDatasource:
                                            keys.DatasourceKeys.ARTIFACT_STORE])
 
         # metadata store
-        metadata_store: ZenMLMetadataStore = ZenMLMetadataStore.from_config(
+        metadata_store: BaseMetadataStore = BaseMetadataStore.from_config(
             config=config[keys.PipelineKeys.DATASOURCE][
                 keys.DatasourceKeys.METADATA_STORE]
         )
@@ -307,7 +307,7 @@ class BaseDatasource:
 
         store = self.metadata_store.store
         run_contexts = store.get_contexts_by_type(
-            ZenMLMetadataStore.RUN_TYPE_NAME)
+            BaseMetadataStore.RUN_TYPE_NAME)
 
         run_contexts = [x for x in run_contexts if
                         x.name.startswith(DataPipeline.PIPELINE_TYPE)]
@@ -329,7 +329,7 @@ class BaseDatasource:
 
         # First get the context of the component and its artifacts
         component_context = [c for c in store.get_contexts_by_type(
-            ZenMLMetadataStore.NODE_TYPE_NAME) if
+            BaseMetadataStore.NODE_TYPE_NAME) if
                              c.name.endswith(component_name)][0]
         component_artifacts = store.get_artifacts_by_context(
             component_context.id)

@@ -22,7 +22,7 @@ from tfx.types import standard_artifacts
 from zenml.backends.orchestrator import OrchestratorBaseBackend
 from zenml.datasources import BaseDatasource
 from zenml.enums import GDPComponent
-from zenml.metadata import ZenMLMetadataStore
+from zenml.metadata import BaseMetadataStore
 from zenml.pipelines import BasePipeline
 from zenml.repo import ArtifactStore
 from zenml.standards import standard_keys as keys
@@ -44,7 +44,7 @@ class DeploymentPipeline(BasePipeline):
                  enable_cache: Optional[bool] = True,
                  steps_dict: Dict[Text, BaseStep] = None,
                  backend: OrchestratorBaseBackend = None,
-                 metadata_store: Optional[ZenMLMetadataStore] = None,
+                 metadata_store: Optional[BaseMetadataStore] = None,
                  artifact_store: Optional[ArtifactStore] = None,
                  datasource: Optional[BaseDatasource] = None,
                  pipeline_name: Optional[Text] = None):

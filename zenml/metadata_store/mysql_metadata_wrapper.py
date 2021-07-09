@@ -16,23 +16,27 @@ from typing import Text
 
 from tfx.orchestration import metadata
 
-from zenml.metadata import ZenMLMetadataStore
-from zenml.utils import path_utils
+from zenml.metadata import BaseMetadataStore
 from zenml.enums import MLMetadataTypes
 
 
-class SQLiteMetadataStore(ZenMLMetadataStore):
-    STORE_TYPE = MLMetadataTypes.sqlite.name
+class MySQLMetadataStore(BaseMetadataStore):
+    STORE_TYPE = MLMetadataTypes.mysql.name
 
-    def __init__(self, uri: Text):
+    def __init__(self, host: Text, port: int, database: Text, username: Text,
+                 password: Text):
         """Constructor for MySQL MetadataStore for ZenML"""
-        if path_utils.is_remote(uri):
-            raise Exception(f'URI {uri} is a non-local path. A sqlite store '
-                            f'can only be local paths')
-
-        # Resolve URI if relative URI provided
-        self.uri = path_utils.resolve_relative_path(uri)
+        self.host = host
+        self.port = int(port)  # even if its a string, it should be casted
+        self.database = database
+        self.username = username
+        self.password = password
         super().__init__()
 
     def get_tfx_metadata_config(self):
-        return metadata.sqlite_metadata_connection_config(self.uri)
+        return metadata.mysql_metadata_connection_config(
+            host=self.host,
+            port=self.port,
+            database=self.database,
+            username=self.username,
+            password=self.password)

@@ -13,15 +13,16 @@
 #  permissions and limitations under the License.
 """Base ZenML repository"""
 
+from zenml.service_store.base_store import BaseServiceStore
+
+from zenml.artifact_store.base_artifact_store import BaseArtifactStore
 from zenml.logger import get_logger
-from zenml.metadata import ZenMLMetadataStore
-from zenml.core.artifact_store import ArtifactStore
-from zenml.service.app.store.base_store import BaseServiceStore
+from zenml.metadata_store.base_metadata_store import BaseMetadataStore
 
 logger = get_logger(__name__)
 
 
-class Provider:
+class BaseProvider:
     """ZenML provider definition.
 
     A ZenML provider defines an (allowed) combination of a Metadata Store +
@@ -30,16 +31,49 @@ class Provider:
 
     def __init__(self,
                  service_store: BaseServiceStore = None,
-                 metadata_store: ZenMLMetadataStore = None,
-                 artifact_store: ArtifactStore = None):
+                 metadata_store: BaseMetadataStore = None,
+                 artifact_store: BaseArtifactStore = None):
         """
         Constructs a valid constructor.
 
         Args:
             service_store: Object of type `BaseServiceStore`.
-            metadata_store: Object of type `ZenMLMetadataStore`.
-            artifact_store: Object of type `ArtifactStore`.
+            metadata_store: Object of type `BaseMetadataStore`.
+            artifact_store: Object of type `BaseArtifactStore`.
         """
         self.service_store = service_store
         self.metadata_store = metadata_store
         self.artifact_store = artifact_store
+
+    @property
+    def service_store(self):
+        return self.__service_store
+
+    @service_store.setter
+    def service_store(self, service_store: BaseServiceStore):
+        self.__service_store = service_store
+
+    @property
+    def metadata_store(self):
+        return self.metadata_store
+
+    @metadata_store.setter
+    def metadata_store(self, metadata_store: BaseMetadataStore):
+        self.metadata_store = metadata_store
+
+    @property
+    def artifact_store(self):
+        return self.__artifact_store
+
+    @artifact_store.setter
+    def artifact_store(self, artifact_store: BaseArtifactStore):
+        self.__artifact_store = artifact_store
+
+    @staticmethod
+    def get_default():
+        """Returns the default provider"""
+        return BaseProvider(
+            service_store=BaseServiceStore.get_default(),
+            metadata_store=BaseMetadataStore.get_default(),
+            artifact_store=BaseArtifactStore.get_default(),
+        )

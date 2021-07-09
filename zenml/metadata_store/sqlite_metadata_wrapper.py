@@ -12,20 +12,27 @@
 #  or implied. See the License for the specific language governing
 #  permissions and limitations under the License.
 
-from ml_metadata.proto import metadata_store_pb2
+from typing import Text
 
-from zenml.metadata import ZenMLMetadataStore
+from tfx.orchestration import metadata
+
+from zenml.metadata import BaseMetadataStore
+from zenml.utils import path_utils
 from zenml.enums import MLMetadataTypes
 
 
-class MockMetadataStore(ZenMLMetadataStore):
-    STORE_TYPE = MLMetadataTypes.mock.name
+class SQLiteMetadataStore(BaseMetadataStore):
+    STORE_TYPE = MLMetadataTypes.sqlite.name
 
-    def __init__(self):
-        """Constructor for Mock MetadataStore for ZenML."""
+    def __init__(self, uri: Text):
+        """Constructor for MySQL MetadataStore for ZenML"""
+        if path_utils.is_remote(uri):
+            raise Exception(f'URI {uri} is a non-local path. A sqlite store '
+                            f'can only be local paths')
+
+        # Resolve URI if relative URI provided
+        self.uri = path_utils.resolve_relative_path(uri)
         super().__init__()
 
     def get_tfx_metadata_config(self):
-        config = metadata_store_pb2.ConnectionConfig()
-        config.fake_database.SetInParent()  # Sets an empty fake
-        return config
+        return metadata.sqlite_metadata_connection_config(self.uri)

@@ -24,7 +24,7 @@ from zenml.datasources import BaseDatasource
 from zenml.enums import PipelineStatusTypes
 from zenml.exceptions import AlreadyExistsException
 from zenml.logger import get_logger
-from zenml.metadata import ZenMLMetadataStore
+from zenml.metadata import BaseMetadataStore
 from zenml.repo import Repository, ArtifactStore
 from zenml.standards import standard_keys as keys
 from zenml.steps import BaseStep
@@ -48,7 +48,7 @@ class BasePipeline:
                  enable_cache: Optional[bool] = True,
                  steps_dict: Dict[Text, BaseStep] = None,
                  backend: OrchestratorBaseBackend = None,
-                 metadata_store: Optional[ZenMLMetadataStore] = None,
+                 metadata_store: Optional[BaseMetadataStore] = None,
                  artifact_store: Optional[ArtifactStore] = None,
                  datasource: Optional[BaseDatasource] = None,
                  datasource_commit_id: Optional[Text] = None,
@@ -81,10 +81,10 @@ class BasePipeline:
 
         # Metadata store
         if metadata_store:
-            self.metadata_store: ZenMLMetadataStore = metadata_store
+            self.metadata_store: BaseMetadataStore = metadata_store
         else:
             # use default
-            self.metadata_store: ZenMLMetadataStore = \
+            self.metadata_store: BaseMetadataStore = \
                 Repository.get_instance().get_default_metadata_store()
 
         if pipeline_name:
@@ -196,7 +196,7 @@ class BasePipeline:
         artifact_store = ArtifactStore(config[keys.GlobalKeys.ARTIFACT_STORE])
 
         # metadata store
-        metadata_store = ZenMLMetadataStore.from_config(
+        metadata_store = BaseMetadataStore.from_config(
             config=config[keys.GlobalKeys.METADATA_STORE]
         )
 
@@ -380,7 +380,7 @@ class BasePipeline:
     @track(event=RUN_PIPELINE)
     def run(self,
             backend: OrchestratorBaseBackend = None,
-            metadata_store: Optional[ZenMLMetadataStore] = None,
+            metadata_store: Optional[BaseMetadataStore] = None,
             artifact_store: Optional[ArtifactStore] = None):
         """
         Run the pipeline associated with the datasource.

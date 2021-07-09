@@ -87,9 +87,9 @@ def set_metadata_store(store_type, args):
         'type': store_type,
         'args': parsed_args
     }
-    from zenml.metadata.metadata_wrapper import ZenMLMetadataStore
+    from zenml.metadata.metadata_wrapper import BaseMetadataStore
 
-    store = ZenMLMetadataStore.from_config(config)
+    store = BaseMetadataStore.from_config(config)
     repo: Repository = Repository.get_instance()
     repo.zenml_config.set_metadata_store(store)
 

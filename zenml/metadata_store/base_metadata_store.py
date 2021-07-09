@@ -36,7 +36,7 @@ STATE_MAPPING = {0: 'unknown',
                  6: 'cancelled'}
 
 
-class ZenMLMetadataStore:
+class BaseMetadataStore:
     STORE_TYPE = None
     RUN_TYPE_NAME = 'pipeline_run'
     NODE_TYPE_NAME = 'node'

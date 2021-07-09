@@ -19,7 +19,7 @@ from typing import Text, List, Dict, Any, Optional, Union, Type
 
 from zenml.exceptions import InitializationException
 from zenml.logger import get_logger
-from zenml.metadata import ZenMLMetadataStore
+from zenml.metadata import BaseMetadataStore
 from zenml.repo import ArtifactStore, GitWrapper, GlobalConfig, ZenMLConfig
 from zenml.repo.constants import ZENML_DIR_NAME
 from zenml.standards import standard_keys as keys
@@ -101,7 +101,7 @@ class Repository:
     @staticmethod
     @track(event=CREATE_REPO)
     def init_repo(repo_path: Text, artifact_store_path: Text = None,
-                  metadata_store: Optional[ZenMLMetadataStore] = None,
+                  metadata_store: Optional[BaseMetadataStore] = None,
                   pipelines_dir: Text = None,
                   analytics_opt_in: bool = None):
         """
@@ -165,7 +165,7 @@ class Repository:
             file_path (Text): Path to pipeline YAML file.
         """
         config = yaml_utils.read_yaml(file_path)
-        return ZenMLMetadataStore.from_config(
+        return BaseMetadataStore.from_config(
             config[keys.GlobalKeys.METADATA_STORE])
 
     def get_orchestrator_backend_from_file_path(self, file_path: Text):
