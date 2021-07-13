@@ -187,7 +187,7 @@ training_pipeline.run(
         username=mysql_user,
         password=mysql_pw,
     ),
-    artifact_store=ArtifactStore(artifact_store)
+    artifact_store=BaseArtifactStore(artifact_store)
 )
 ```
 

@@ -25,7 +25,7 @@ The Artifact Store can be a local filesystem path or a bucket path \(current sup
 zenml config artifacts set "gs://your-bucket/sub/dir"
 ```
 
-In Python, the `ArtifactStore` and `MetadataStore` classes can be used to override the default stores set above.
+In Python, the `BaseArtifactStore` and `MetadataStore` classes can be used to override the default stores set above.
 
 ## How metadata is stored
 
