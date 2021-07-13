@@ -17,7 +17,7 @@ assert GCP_BUCKET
 CORTEX_ENV = os.getenv('CORTEX_ENV', 'env')
 CORTEX_MODEL_NAME = os.getenv('CORTEX_MODEL_NAME', 'zenml-classifier')
 
-# For this example, the ArtifactStore must be a GCP bucket, as the
+# For this example, the BaseArtifactStore must be a GCP bucket, as the
 # CortexDeployer step is using the GCP env.
 
 from zenml.repo.repo import Repository
