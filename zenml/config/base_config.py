@@ -45,11 +45,11 @@ class BaseConfig:
         if not env_prefix:
             raise Exception('env_prefix can not be null.')
         self.env_prefix = env_prefix
-        self.config = {}
-        self.prefix = None
         self.config_path = self.env_prefix + '_PATH'
         self.config_prefix = self.env_prefix + '_PREFIX'
         self.config_root_path = self.env_prefix + '_ROOT'
+        self.config = {}  # Main dict to hold all values
+        self.prefix = None  # prefix
         self.basepath = os.getenv(
             self.config_path, default=self.default_config_root
         )
@@ -63,7 +63,7 @@ class BaseConfig:
         self.load()
 
     def load(self):
-        """(Re)Load config file."""
+        """(Re)Load the config file."""
         try:
             self.config = yaml_utils.read_yaml(self.config_path)
         except:
@@ -88,7 +88,7 @@ class BaseConfig:
                             self.prefix = prefix
                             break
 
-    def get(self, var, section=None, **kwargs):
+    def get(self, var, section: Text = None, **kwargs):
         """Retrieve a config var.
         Return environment variable if it exists
         (ie [self.prefix + _] + [section + _] + var)
