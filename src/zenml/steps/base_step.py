@@ -44,7 +44,6 @@ from zenml.steps.base_step_config import BaseStepConfig
 from zenml.steps.step_output import Output
 from zenml.steps.utils import (
     SINGLE_RETURN_OUT_NAME,
-    STEP_INNER_FUNC_NAME,
     _ZenMLSimpleComponent,
     generate_component,
 )
@@ -86,7 +85,7 @@ class BaseStepMeta(type):
 
         # Looking into the signature of the provided process function
         process_spec = inspect.getfullargspec(
-            getattr(cls, STEP_INNER_FUNC_NAME)
+            getattr(cls, cls.STEP_INNER_FUNC_NAME)
         )
         process_args = process_spec.args
         logger.debug(f"{name} args: {process_args}")
@@ -141,6 +140,8 @@ class BaseStep(metaclass=BaseStepMeta):
     INPUT_SIGNATURE: ClassVar[Dict[str, Type[Any]]] = None  # type: ignore[assignment] # noqa
     OUTPUT_SIGNATURE: ClassVar[Dict[str, Type[Any]]] = None  # type: ignore[assignment] # noqa
     CONFIG: ClassVar[Optional[Type[BaseStepConfig]]] = None
+
+    STEP_INNER_FUNC_NAME = "process"
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         self.materializers: Dict[str, Type[BaseMaterializer]] = {}

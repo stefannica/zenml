@@ -121,7 +121,7 @@ def generate_component(step: "BaseStep") -> Callable[..., Any]:
         "%s_Executor" % step.__class__.__name__,
         (_FunctionExecutor,),
         {
-            "_FUNCTION": staticmethod(getattr(step, STEP_INNER_FUNC_NAME)),
+            "_FUNCTION": staticmethod(getattr(step, step.STEP_INNER_FUNC_NAME)),
             "__module__": step.__module__,
             "spec_materializer_registry": step.spec_materializer_registry,
             PARAM_STEP_NAME: step.step_name,

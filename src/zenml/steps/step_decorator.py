@@ -14,7 +14,6 @@
 from typing import Any, Callable, Optional, Type, TypeVar, Union, overload
 
 from zenml.steps.base_step import BaseStep
-from zenml.steps.utils import STEP_INNER_FUNC_NAME
 
 F = TypeVar("F", bound=Callable[..., Any])
 
@@ -32,7 +31,7 @@ def step(*, name: Optional[str] = None) -> Callable[[F], Type[BaseStep]]:
 
 
 def step(
-    _func: Optional[F] = None, *, name: Optional[str] = None
+        _func: Optional[F] = None, *, name: Optional[str] = None
 ) -> Union[Type[BaseStep], Callable[[F], Type[BaseStep]]]:
     """Outer decorator function for the creation of a ZenML step
 
@@ -63,7 +62,7 @@ def step(
             step_name,
             (BaseStep,),
             {
-                STEP_INNER_FUNC_NAME: staticmethod(func),
+                BaseStep.STEP_INNER_FUNC_NAME: staticmethod(func),
             },
         )
 
