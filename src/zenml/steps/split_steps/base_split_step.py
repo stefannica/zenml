@@ -13,8 +13,6 @@
 #  permissions and limitations under the License.
 from abc import abstractmethod
 
-import apache_beam as beam
-
 from zenml.artifacts import DataArtifact
 from zenml.steps.base_step import BaseStep
 from zenml.steps.base_step_config import BaseStepConfig
@@ -28,23 +26,14 @@ class BaseSplitStepConfig(BaseStepConfig):
 class BaseSplitStep(BaseStep):
     """Base step implementation for any split step implementation on ZenML
     """
+    STEP_INNER_FUNC_NAME = "split_fn"
 
-    def process(
+    @abstractmethod
+    def split_fn(
             self,
             dataset: DataArtifact,
-            config: DataArtifact,
+            config: BaseSplitStepConfig,
     ) -> Output(train=DataArtifact,
                 test=DataArtifact,
                 validation=DataArtifact):
-        split_fn = getattr(self, "split_fn")
-
-        train, test, validation = (
-                dataset
-                | 'Split' >> beam.Partition(split_fn, 3, config)
-        )
-
-        return train, test, validation
-
-    @abstractmethod
-    def split_fn(self):
-        pass
+        """ hmmm """

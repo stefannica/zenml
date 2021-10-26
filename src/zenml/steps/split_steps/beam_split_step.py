@@ -12,35 +12,34 @@
 #  or implied. See the License for the specific language governing
 #  permissions and limitations under the License.
 
-from typing import List, Text
-
 import apache_beam as beam
 
-from zenml.logger import get_logger
 from zenml.steps.split_steps.base_split_step import BaseSplitStep, \
     BaseSplitStepConfig
 from zenml.steps.step_output import Output
 
-logger = get_logger(__name__)
 
-
-class RandomSplitConfig(BaseSplitStepConfig):
+class BeamSplitConfig(BaseSplitStepConfig):
     train_ratio: float = 0.7
     test_ratio: float = 0.15
     validation_ration: float = 0.15
 
 
-class RandomSplit(BaseSplitStep):
-    def process(self,
-                dataset: beam.PCollection,
-                config: RandomSplitConfig,
-                ) -> Output(train=beam.PCollection,
-                            test=beam.PCollection,
-                            validation=beam.PCollection):
-        return super(RandomSplit, self).process(dataset=dataset,
-                                                config=config)
+def partition_fn(element, num_partition, config):
+    return 0
 
-    @staticmethod
-    def split_fn(batch, num_partitions, config) -> int:
-        print(batch)
-        return 0
+
+class BeamSplit(BaseSplitStep):
+
+    def split_fn(self,
+                 dataset: beam.PCollection,
+                 config: BeamSplitConfig,
+                 ) -> Output(train=beam.PCollection,
+                             test=beam.PCollection,
+                             validation=beam.PCollection):
+        train, test, validation = (
+                dataset
+                | 'Split' >> beam.Partition(partition_fn, 3, config)
+        )
+
+        return train, test, validation
