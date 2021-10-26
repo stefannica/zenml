@@ -12,13 +12,19 @@
 #  or implied. See the License for the specific language governing
 #  permissions and limitations under the License.
 
-
+# Base implementations
 from zenml.steps.base_step import BaseStep, BaseStepConfig  # noqa
+from zenml.steps.step_decorator import step  # noqa
+
+# Built-in steps
 from zenml.steps.datasources import (
     TextDatasource, TextDatasourceConfig
-)  # noqa
+)
 
-from zenml.steps.split_steps.random_split_step import (
+from zenml.steps.split_steps import (
     RandomSplit, RandomSplitConfig
-)  # noqa
-from zenml.steps.step_decorator import step  # noqa
+)
+
+from zenml.steps.trainer_steps import (
+    TensorflowTrainer, TensorflowTrainerConfig
+)
