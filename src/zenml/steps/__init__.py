@@ -14,8 +14,11 @@
 
 
 from zenml.steps.base_step import BaseStep, BaseStepConfig  # noqa
-from zenml.steps.datasources.text_datasource import (
-    TextDatasource,
-    TextDatasourceConfig
+from zenml.steps.datasources import (
+    TextDatasource, TextDatasourceConfig
+)  # noqa
+
+from zenml.steps.split_steps.random_split_step import (
+    RandomSplit, RandomSplitConfig
 )  # noqa
 from zenml.steps.step_decorator import step  # noqa
