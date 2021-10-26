@@ -324,6 +324,10 @@ class _FunctionExecutor(BaseExecutor):
         # First, we parse the inputs, i.e., params and input artifacts.
         spec = inspect.getfullargspec(self._FUNCTION)
         args = spec.args
+
+        if "self" in spec.args:
+            args.remove("self")
+
         for arg in args:
             arg_type = spec.annotations.get(arg, None)
             if issubclass(arg_type, BaseStepConfig):
