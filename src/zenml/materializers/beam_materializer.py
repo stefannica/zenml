@@ -12,11 +12,14 @@
 #  or implied. See the License for the specific language governing
 #  permissions and limitations under the License.
 
+import os
 from typing import Any, Type
 
 import apache_beam as beam
 
 from zenml.materializers.base_materializer import BaseMaterializer
+
+DEFAULT_FILENAME = "data"
 
 
 class BeamMaterializer(BaseMaterializer):
@@ -24,22 +27,25 @@ class BeamMaterializer(BaseMaterializer):
 
     ASSOCIATED_TYPES = [beam.Pipeline, beam.PCollection]
 
-    def handle_input(self, data_type: Type[Any]) -> Any:
+    def handle_input(self, data_type: Type) -> Any:
         """Reads all files inside the artifact directory and materializes them
         as a beam compatible output."""
-        # TODO [MEDIUM]: Implement beam reading
         super().handle_input(data_type)
 
-    def handle_return(self, pipeline: beam.Pipeline) -> None:
+        pipeline = beam.Pipeline()
+        return pipeline | beam.io.ReadFromText(self.artifact.uri + "/*")
+
+    def handle_return(self, pcollection: beam.PCollection):
         """Appends a beam.io.WriteToParquet at the end of a beam pipeline
         and therefore persists the results.
 
         Args:
-            pipeline: A beam.pipeline object.
+            pcollection: A beam.PCollection object.
         """
-        # TODO [MEDIUM]: Implement beam writing
-        super().handle_return(pipeline)
-        pipeline | beam.ParDo()
-        pipeline.run()
-        # pipeline | beam.io.WriteToParquet(self.artifact.uri)
-        # pipeline.run()
+        super().handle_return(pcollection)
+
+        filepath = os.path.join(self.artifact.uri, DEFAULT_FILENAME)
+        pcollection | f"WriteToText{self.artifact.name}" >> beam.io.WriteToText(
+            filepath
+        )
+        pcollection.pipeline.run()
