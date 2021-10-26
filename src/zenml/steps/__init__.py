@@ -22,7 +22,7 @@ from zenml.steps.datasources import (
 )
 
 from zenml.steps.split_steps import (
-    RandomSplit, RandomSplitConfig
+    BeamSplit, BeamSplitConfig
 )
 
 from zenml.steps.trainer_steps import (
