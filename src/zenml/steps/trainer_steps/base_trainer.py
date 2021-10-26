@@ -1,4 +1,4 @@
-#  Copyright (c) ZenML GmbH 2021. All Rights Reserved.
+#  Copyright (c) ZenML GmbH 2020. All Rights Reserved.
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -11,29 +11,31 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
 #  or implied. See the License for the specific language governing
 #  permissions and limitations under the License.
-
 from abc import abstractmethod
+from typing import Any
 
-from zenml.artifacts import DataArtifact
+from zenml.artifacts import DataArtifact, ModelArtifact
 from zenml.steps.base_step import BaseStep
 from zenml.steps.base_step_config import BaseStepConfig
 
 
-class BaseDatasourceConfig(BaseStepConfig):
-    """Base class for datasource configs to inherit from"""
+class BaseTrainerConfig(BaseStepConfig):
+    """Base class for trainer configs to inherit from"""
 
 
-class BaseDatasourceStep(BaseStep):
-    """Base step implementation for any datasource step implementation on ZenML
+class BaseTrainer(BaseStep):
+    """Base step implementation for any trainer step implementation on ZenML
     """
 
     def process(
             self,
-            config: DataArtifact
-    ) -> DataArtifact:
-        dataset = self.ingest_fn(config)
-        return dataset
+            train_dataset: DataArtifact,
+            validation_dataset: DataArtifact,
+            config: BaseTrainerConfig,
+    ) -> ModelArtifact:
+        model = self.train_fn(train_dataset, validation_dataset)
+        return model
 
     @abstractmethod
-    def ingest_fn(self, datasource_config):
+    def train_fn(self, train_dataset, validation_dataset) -> Any:
         pass

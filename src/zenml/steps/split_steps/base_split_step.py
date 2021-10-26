@@ -15,29 +15,27 @@ from abc import abstractmethod
 
 import apache_beam as beam
 
+from zenml.artifacts import DataArtifact
 from zenml.steps.base_step import BaseStep
 from zenml.steps.base_step_config import BaseStepConfig
 from zenml.steps.step_output import Output
 
 
-# Configuration for the split step ############################################
 class BaseSplitStepConfig(BaseStepConfig):
     """Base class for split configs to inherit from"""
 
 
-# Base implementation of the split step #######################################
 class BaseSplitStep(BaseStep):
     """Base step implementation for any split step implementation on ZenML
     """
 
     def process(
             self,
-            dataset: beam.PCollection,
-            config: BaseSplitStepConfig,
-    ) -> Output(train=beam.PCollection,
-                test=beam.PCollection,
-                validation=beam.PCollection):
-
+            dataset: DataArtifact,
+            config: DataArtifact,
+    ) -> Output(train=DataArtifact,
+                test=DataArtifact,
+                validation=DataArtifact):
         split_fn = getattr(self, "split_fn")
 
         train, test, validation = (
