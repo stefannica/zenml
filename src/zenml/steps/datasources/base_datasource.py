@@ -13,7 +13,7 @@
 #  permissions and limitations under the License.
 
 from abc import abstractmethod
-
+from typing import Any
 from zenml.artifacts import DataArtifact
 from zenml.steps.base_step import BaseStep
 from zenml.steps.base_step_config import BaseStepConfig
@@ -26,14 +26,13 @@ class BaseDatasourceConfig(BaseStepConfig):
 class BaseDatasourceStep(BaseStep):
     """Base step implementation for any datasource step implementation on ZenML
     """
+    STEP_INNER_FUNC_NAME = "ingest_fn"
 
-    def process(
-            self,
-            config: DataArtifact
-    ) -> DataArtifact:
-        dataset = self.ingest_fn(config)
-        return dataset
+    def process(self, *args: Any, **kwargs: Any) -> Any:
+        pass
 
     @abstractmethod
-    def ingest_fn(self, datasource_config):
-        pass
+    def ingest_fn(self,
+                  config: DataArtifact
+                  ) -> DataArtifact:
+        """"""

@@ -12,6 +12,7 @@
 #  or implied. See the License for the specific language governing
 #  permissions and limitations under the License.
 from abc import abstractmethod
+from typing import Any
 
 from zenml.artifacts import DataArtifact
 from zenml.steps.base_step import BaseStep
@@ -27,6 +28,9 @@ class BaseSplitStep(BaseStep):
     """Base step implementation for any split step implementation on ZenML
     """
     STEP_INNER_FUNC_NAME = "split_fn"
+
+    def process(self, *args: Any, **kwargs: Any) -> Any:
+        pass
 
     @abstractmethod
     def split_fn(
