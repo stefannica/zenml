@@ -20,12 +20,10 @@ from zenml.steps.base_step import BaseStep
 from zenml.steps.base_step_config import BaseStepConfig
 
 
-# Configuration for the split step ############################################
 class BaseDatasourceConfig(BaseStepConfig):
     """Base class for datasource configs to inherit from"""
 
 
-# Base implementation of the split step #######################################
 class BaseDatasourceStep(BaseStep):
     """Base step implementation for any datasource step implementation on ZenML
     """
