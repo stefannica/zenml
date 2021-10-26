@@ -14,6 +14,8 @@
 
 from abc import abstractmethod
 
+import apache_beam as beam
+
 from zenml.steps.base_step import BaseStep
 from zenml.steps.base_step_config import BaseStepConfig
 
@@ -27,6 +29,13 @@ class BaseDatasourceConfig(BaseStepConfig):
 class BaseDatasourceStep(BaseStep):
     """Base step implementation for any datasource step implementation on ZenML
     """
+
+    def process(
+            self,
+            config: BaseDatasourceConfig
+    ) -> beam.PCollection:
+        dataset = self.ingest_fn(config)
+        return dataset
 
     @abstractmethod
     def ingest_fn(self, datasource_config):

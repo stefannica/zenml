@@ -32,12 +32,15 @@ class TextDatasourceConfig(BaseDatasourceConfig):
 
 
 class TextDatasource(BaseDatasourceStep):
-    def process(
-            self,
-            config: TextDatasourceConfig
-    ) -> beam.PCollection:
-        dataset = self.ingest_fn(config)
-        return dataset
+    # TODO: [LOW] There is a slight misalignment regarding the configuration
+    #  which is only solved if we redefine process function again. In detail,
+    #  there are two instances where we look at the signature of the process
+    #  function. First, when we create the pydantic param model as we create
+    #  the step, second, when we try to recreate the model within the `Do`. If
+    #  we don't overwrite this process function, config remains to be a
+    #  `BaseDatasourceConfig` which fails to create the actual config.
+    def process(self, config: TextDatasourceConfig) -> beam.PCollection:
+        return super(TextDatasource, self).process(config)
 
     def ingest_fn(
             self,
