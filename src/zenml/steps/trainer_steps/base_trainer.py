@@ -12,7 +12,6 @@
 #  or implied. See the License for the specific language governing
 #  permissions and limitations under the License.
 from abc import abstractmethod
-from typing import Any
 
 from zenml.artifacts import DataArtifact, ModelArtifact
 from zenml.steps.base_step import BaseStep
@@ -27,15 +26,12 @@ class BaseTrainer(BaseStep):
     """Base step implementation for any trainer step implementation on ZenML
     """
 
-    def process(
-            self,
-            train_dataset: DataArtifact,
-            validation_dataset: DataArtifact,
-            config: BaseTrainerConfig,
-    ) -> ModelArtifact:
-        model = self.train_fn(train_dataset, validation_dataset)
-        return model
+    STEP_INNER_FUNC_NAME = "train_fn"
 
     @abstractmethod
-    def train_fn(self, train_dataset, validation_dataset) -> Any:
-        pass
+    def train_fn(self,
+                 train_dataset: DataArtifact,
+                 validation_dataset: DataArtifact,
+                 config: BaseTrainerConfig,
+                 ) -> ModelArtifact:
+        """"""
