@@ -13,5 +13,9 @@
 #  permissions and limitations under the License.
 
 
-from zenml.steps.base_step import BaseStep  # noqa
+from zenml.steps.base_step import BaseStep, BaseStepConfig  # noqa
+from zenml.steps.datasources.text_datasource import (
+    TextDatasource,
+    TextDatasourceConfig
+)  # noqa
 from zenml.steps.step_decorator import step  # noqa
