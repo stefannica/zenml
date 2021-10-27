@@ -23,13 +23,14 @@ class BeamSplitConfig(BaseSplitStepConfig):
     train_ratio: float = 0.7
     test_ratio: float = 0.15
     validation_ration: float = 0.15
-
-
-def partition_fn(element, num_partition, config):
-    return 0
+    batch_size: int = 10
 
 
 class BeamSplit(BaseSplitStep):
+
+    @staticmethod
+    def partition_fn(element, num_partition, config):
+        return 0
 
     def split_fn(self,
                  dataset: beam.PCollection,
@@ -39,7 +40,8 @@ class BeamSplit(BaseSplitStep):
                              validation=beam.PCollection):
         train, test, validation = (
                 dataset
-                | 'Split' >> beam.Partition(partition_fn, 3, config)
+                | "Batch" >> beam.BatchElements(config.batch_size)
+                | 'Split' >> beam.Partition(self.partition_fn, 3, config)
         )
 
         return train, test, validation

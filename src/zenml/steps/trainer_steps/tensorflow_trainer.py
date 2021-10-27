@@ -46,3 +46,27 @@ class TensorflowTrainer(BaseTrainer):
                   epochs=config.epochs)
 
         return model
+
+#
+# @trainer
+# def train_fn(
+#         train_dataset: np.ndarray,
+#         validation_dataset: np.ndarray,
+#         config: TensorflowTrainerConfig,
+# ) -> tf.keras.Model:
+#     model = tf.keras.Sequential([
+#         tf.keras.layers.Dense(10, activation="relu"),
+#         tf.keras.layers.Dense(10)])
+#
+#     model.compile(
+#         optimizer=tf.keras.optimizers.Adam(config.learning_rate),
+#         loss=tf.keras.losses.SparseCategoricalCrossentropy(
+#             from_logits=True),
+#         metrics=["accuracy"],
+#     )
+#
+#     model.fit(train_dataset,
+#               validation_data=validation_dataset,
+#               epochs=config.epochs)
+#
+#     return model

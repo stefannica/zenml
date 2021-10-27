@@ -12,12 +12,13 @@
 #  or implied. See the License for the specific language governing
 #  permissions and limitations under the License.
 from abc import abstractmethod
+from typing import Any
 
 from zenml.artifacts import DataArtifact, ModelArtifact
 from zenml.steps.base_step import BaseStep
 from zenml.steps.base_step_config import BaseStepConfig
 
-from typing import Any
+
 class BaseTrainerConfig(BaseStepConfig):
     """Base class for trainer configs to inherit from"""
 
@@ -27,8 +28,10 @@ class BaseTrainer(BaseStep):
     """
 
     STEP_INNER_FUNC_NAME = "train_fn"
+
     def process(self, *args: Any, **kwargs: Any) -> Any:
         pass
+
     @abstractmethod
     def train_fn(self,
                  train_dataset: DataArtifact,
