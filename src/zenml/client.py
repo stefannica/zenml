@@ -2610,7 +2610,7 @@ class Client(metaclass=ClientMetaClass):
         if name:
             if self.list_triggers(name=name):
                 raise EntityExistsError(
-                    "There are already is an existing trigger with the name "
+                    "There already is an existing trigger with the name "
                     f"'{name}'."
                 )
 
